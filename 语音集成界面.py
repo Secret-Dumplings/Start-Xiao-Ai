@@ -33,13 +33,15 @@ software_path = r"C:\Users\admin\Desktop\VoiceXiaoai\xiaoai.exe"
 # 定义一个函数来处理语音识别
 def listen_for_keyword(model, keyword, software_path):
     p = pyaudio.PyAudio()
-    stream = p.open(format=pyaudio.paInt16, channels=1, rate=16000, input=True, frames_per_buffer=8000)
-    stream.start_stream()
-    recognizer = KaldiRecognizer(model, 16000)
-
-    print("请说话...")
+    stream = None
 
     try:
+        stream = p.open(format=pyaudio.paInt16, channels=1, rate=16000, input=True, frames_per_buffer=8000)
+        stream.start_stream()
+        recognizer = KaldiRecognizer(model, 16000)
+
+        print("请说话...")
+
         while True:
             data = stream.read(4000)
             if len(data) == 0:
@@ -58,15 +60,17 @@ def listen_for_keyword(model, keyword, software_path):
     except OSError as e:
         if e.errno == -9981:  # Input overflowed
             print("Input overflowed, resetting stream...")
-            stream.stop_stream()
-            stream.close()
+            if stream is not None:
+                stream.stop_stream()
+                stream.close()
             stream = p.open(format=pyaudio.paInt16, channels=1, rate=16000, input=True, frames_per_buffer=8000)
             stream.start_stream()
         else:
             raise  # 重新抛出其他异常
     finally:
-        stream.stop_stream()
-        stream.close()
+        if stream is not None:
+            stream.stop_stream()
+            stream.close()
         p.terminate()
 
 # 创建主窗口
