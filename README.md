@@ -35,5 +35,15 @@
 5. 对着麦克风说出提示词，如果识别成功，将自动打开指定的软件。
 
 ## 项目维护
-- 作者：[秘密小汤圆]
+- 作者：[[秘密小汤圆](https://github.com/Secret-Dumplings)]
 - GitHub链接：[[项目的GitHub链接](https://github.com/Secret-Dumplings/Start-Xiao-Ai)]
+
+## 使用源项目
+启动小爱脚本
+- GitHub链接：[[项目的GitHub链接](https://github.com/chhc007/OneClickXiaoai)]
+- 作者：[[chhc007](https://github.com/chhc007)]
+
+识别模型
+[项目的链接](https://alphacephei.com/vosk/models)
+
+  
