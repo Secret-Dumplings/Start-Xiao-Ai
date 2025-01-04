@@ -3,10 +3,10 @@
 本项目实现了语音识别功能，通过监听特定的提示词来触发打开指定软件的操作。同时，提供了一个图形用户界面，允许用户自定义提示词。
 
 ## 文件说明
-- `ASR.py`: 实现语音识别和软件触发功能。
+- `ASR.py`: 实现语音识别和软件触发功能。（已弃用先位于语音集成界面中的ASR函数）
 - `语音集成界面.py`: 提供一个图形用户界面，允许用户输入自定义的提示词，并触发语音识别功能。
 
-## ASR.py 工作流程
+## ASR.py 工作流程（已弃用先位于语音集成界面中的ASR函数）
 1. 加载语音识别模型。
 2. 从文件 `prompt_word.txt` 中读取提示词，默认为 "小爱同学"。
 3. 定义要打开的软件的绝对路径。
@@ -38,12 +38,12 @@
 - 作者：[[秘密小汤圆](https://github.com/Secret-Dumplings)]
 - GitHub链接：[[项目的GitHub链接](https://github.com/Secret-Dumplings/Start-Xiao-Ai)]
 
-## 使用源项目
-启动小爱脚本
+## 使用源项目（请下载到指定文件夹下）
+启动小爱脚本（解压到桌面）
 - GitHub链接：[[项目的GitHub链接](https://github.com/chhc007/OneClickXiaoai)]
 - 作者：[[chhc007](https://github.com/chhc007)]
 
-识别模型
+识别模型（C:\ai-model\vosk\vosk-model-cn-0.22）
 [项目的链接](https://alphacephei.com/vosk/models)
 
   
