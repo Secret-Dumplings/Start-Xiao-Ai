@@ -5,7 +5,6 @@ import threading
 import pyaudio
 from vosk import Model, KaldiRecognizer
 import os
-import wave
 import json
 import subprocess
 import time
@@ -36,41 +35,53 @@ def listen_for_keyword(model, keyword, software_path):
     stream = None
 
     try:
-        stream = p.open(format=pyaudio.paInt16, channels=1, rate=16000, input=True, frames_per_buffer=8000)
+        stream = p.open(format=pyaudio.paInt16, channels=1, rate=16000, input=True, frames_per_buffer=16000)
         stream.start_stream()
         recognizer = KaldiRecognizer(model, 16000)
 
         print("请说话...")
 
         while True:
-            data = stream.read(4000)
-            if len(data) == 0:
-                break
-            if recognizer.AcceptWaveform(data):
-                result = json.loads(recognizer.Result())
-                if 'text' in result:
-                    text = result['text']
-                    text = text.replace(" ", "")
-                    # 检查是否包含特定的提示词
-                    if keyword in text:
-                        print("检测到提示词，正在打开软件...")
-                        # 使用subprocess打开软件
-                        subprocess.Popen(software_path)
-                        # break  # 打开软件后退出循环
-    except OSError as e:
-        if e.errno == -9981:  # Input overflowed
-            print("Input overflowed, resetting stream...")
-            if stream is not None:
+            try:
+                data = stream.read(4000)
+                if len(data) == 0:
+                    break
+                if recognizer.AcceptWaveform(data):
+                    result = json.loads(recognizer.Result())
+                    if 'text' in result:
+                        text = result['text']
+                        text = text.replace(" ", "")
+                        # 检查是否包含特定的提示词
+                        if keyword in text:
+                            print("检测到提示词，正在打开软件...")
+                            # 使用subprocess打开软件
+                            subprocess.Popen(software_path)
+                            # break  # 打开软件后退出循环
+            except OSError as e:
+                if e.errno == -9981:  # Input overflowed
+                    print("Input overflowed, resetting stream...")
+                    if stream is not None and stream.is_active():
+                        try:
+                            stream.stop_stream()
+                            stream.close()
+                        except OSError as ex:
+                            if ex.errno != -9981:
+                                print(f"Error stopping stream: {ex}")
+                        stream = None
+                    stream = p.open(format=pyaudio.paInt16, channels=1, rate=16000, input=True, frames_per_buffer=16000)
+                    stream.start_stream()
+                else:
+                    raise  # 重新抛出其他异常
+    except Exception as e:
+        print(f"An error occurred: {e}")
+    finally:
+        if stream is not None and stream.is_active():
+            try:
                 stream.stop_stream()
                 stream.close()
-            stream = p.open(format=pyaudio.paInt16, channels=1, rate=16000, input=True, frames_per_buffer=8000)
-            stream.start_stream()
-        else:
-            raise  # 重新抛出其他异常
-    finally:
-        if stream is not None:
-            stream.stop_stream()
-            stream.close()
+            except OSError as e:
+                if e.errno != -9981:
+                    print(f"Error stopping stream: {e}")
         p.terminate()
 
 # 创建主窗口
